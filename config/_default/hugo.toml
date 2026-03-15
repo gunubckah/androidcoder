@@ -1,0 +1,25 @@
+# baseURL                = "http://localhost:1313/"
+baseURL = "https://gunubckah.github.io/androidcoder/"
+languageCode           = "zh-cn"
+title                  = "我的安卓起源"
+# Theme i18n support
+# See i18n folder for available languages
+defaultContentLanguage = "zh"
+# Set hasCJKLanguage to true if DefaultContentLanguage is a CJK language
+# This will make .Summary and .WordCount behave correctly
+hasCJKLanguage         = true
+
+Theme = "stack"
+
+[[module.imports]]
+    path = "stack"
+
+[pagination]
+    pagerSize = 5
+
+[permalinks]
+    post = "/p/:slug/"
+    page = "/:slug/"
+
+[services.disqus]
+    shortname = "hugo-theme-stack"

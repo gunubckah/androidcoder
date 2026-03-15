@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><script src="/androidcoder/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=androidcoder/livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Context\rhttps://juejin.cn/post/7582039917217988608\nContext（上下文）核心知识点与应用场景\r一、Context 的类型与层级关系\r类型 获取方式 生命周期 内存泄漏风险 典型使用场景 Application Context getApplicationContext() 应用全局（从启动到终止） 低 全局单例、数据库、工具类、资源访问 Activity Context this（在Activity中） Activity生命周期（onCreate到onDestroy） 高（引用Activity） UI操作、启动Activity、对话框、主题资源 Service Context this（在Service中） Service生命周期 中 后台任务、绑定服务、通知 BroadcastReceiver Context context参数（onReceive） 短暂（onReceive期间） 低 广播处理（注意不能用于UI） 继承关系：ContextWrapper ← Context → ContextThemeWrapper（Activity）→ Activity\n">
+<title>初级安卓开发</title>
+
+
+<link rel="canonical" href="/img/website.png"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/androidcoder/scss/style.min.6689759220805d47353b7d4c683413ba4a8db71f3886a488b48993341feddf9a.css"><meta property='og:title' content="我的安卓起源">
+<meta property='og:description' content="Context\rhttps://juejin.cn/post/7582039917217988608\nContext（上下文）核心知识点与应用场景\r一、Context 的类型与层级关系\r类型 获取方式 生命周期 内存泄漏风险 典型使用场景 Application Context getApplicationContext() 应用全局（从启动到终止） 低 全局单例、数据库、工具类、资源访问 Activity Context this（在Activity中） Activity生命周期（onCreate到onDestroy） 高（引用Activity） UI操作、启动Activity、对话框、主题资源 Service Context this（在Service中） Service生命周期 中 后台任务、绑定服务、通知 BroadcastReceiver Context context参数（onReceive） 短暂（onReceive期间） 低 广播处理（注意不能用于UI） 继承关系：ContextWrapper ← Context → ContextThemeWrapper（Activity）→ Activity\n">
+<meta property='og:url' content='http://localhost:1313/androidcoder/p/'>
+<meta property='og:site_name' content='我的安卓起源'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="我的安卓起源">
+<meta name="twitter:description" content="Context\rhttps://juejin.cn/post/7582039917217988608\nContext（上下文）核心知识点与应用场景\r一、Context 的类型与层级关系\r类型 获取方式 生命周期 内存泄漏风险 典型使用场景 Application Context getApplicationContext() 应用全局（从启动到终止） 低 全局单例、数据库、工具类、资源访问 Activity Context this（在Activity中） Activity生命周期（onCreate到onDestroy） 高（引用Activity） UI操作、启动Activity、对话框、主题资源 Service Context this（在Service中） Service生命周期 中 后台任务、绑定服务、通知 BroadcastReceiver Context context参数（onReceive） 短暂（onReceive期间） 低 广播处理（注意不能用于UI） 继承关系：ContextWrapper ← Context → ContextThemeWrapper（Activity）→ Activity\n">
+    <link rel="shortcut icon" href="/androidcoder/img/website.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/androidcoder/">
+                    <img src="/androidcoder/img/avatar.jpg" 
+                        width="320"
+                        height="320"
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+                    <span class="emoji">✏️</span>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name sidebar-title"><a href="/androidcoder/">我的安卓起源</a></h1>
+            <h2 class="sidebar-signature site-description">我有一刀，可裂苍穹；苍穹不可裂，刀碎。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/androidcoder/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/androidcoder/%E5%85%B3%E4%BA%8E/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/androidcoder/archives/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/androidcoder/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/androidcoder/%E9%93%BE%E6%8E%A5/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    <li id="i18n-switch">  
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                        <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                            
+                                
+                                
+                                    
+                                
+                                <option value="/androidcoder/en/" >English</option>
+                            
+                                
+                                
+                                    
+                                        
+                                    
+                                
+                                <option value="/androidcoder/p/" selected>简体中文</option>
+                            
+                                
+                                
+                                    
+                                
+                                <option value="/androidcoder/zh-hant-tw/" >正體中文</option>
+                            
+                                
+                                
+                                    
+                                
+                                <option value="/androidcoder/ja/" >日本語</option>
+                            
+                        </select>
+                    </li>
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1-协程是什么">1. <strong>协程是什么？</strong></a></li>
+        <li><a href="#2-协程的核心概念">2. <strong>协程的核心概念</strong></a>
+          <ol>
+            <li><a href="#a-挂起函数suspend-function"><strong>a. 挂起函数（Suspend Function）</strong></a></li>
+            <li><a href="#b-协程构建器"><strong>b. 协程构建器</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#一viewmodelscope-详解">一、viewModelScope 详解</a>
+      <ol>
+        <li><a href="#1-什么是-viewmodelscope">1. <strong>什么是 viewModelScope？</strong></a></li>
+        <li><a href="#2-核心特性">2. <strong>核心特性</strong></a>
+          <ol>
+            <li><a href="#a-自动取消机制"><strong>a. 自动取消机制</strong></a></li>
+            <li><a href="#b-生命周期绑定"><strong>b. 生命周期绑定</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-内部工作原理">3. <strong>内部工作原理</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#二kotlin-协程深度解析">二、Kotlin 协程深度解析</a>
+      <ol>
+        <li><a href="#1-协程是什么-1">1. <strong>协程是什么？</strong></a></li>
+        <li><a href="#2-协程的核心概念-1">2. <strong>协程的核心概念</strong></a>
+          <ol>
+            <li><a href="#a-挂起函数suspend-function-1"><strong>a. 挂起函数（Suspend Function）</strong></a></li>
+            <li><a href="#b-协程构建器-1"><strong>b. 协程构建器</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-协程调度器dispatchers">3. <strong>协程调度器（Dispatchers）</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#一viewmodelscope-详解-1">一、viewModelScope 详解</a>
+      <ol>
+        <li><a href="#1-什么是-viewmodelscope-1">1. <strong>什么是 viewModelScope？</strong></a></li>
+        <li><a href="#2-核心特性-1">2. <strong>核心特性</strong></a>
+          <ol>
+            <li><a href="#a-自动取消机制-1"><strong>a. 自动取消机制</strong></a></li>
+            <li><a href="#b-生命周期绑定-1"><strong>b. 生命周期绑定</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-内部工作原理-1">3. <strong>内部工作原理</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#二kotlin-协程深度解析-1">二、Kotlin 协程深度解析</a>
+      <ol>
+        <li><a href="#1-协程是什么-2">1. <strong>协程是什么？</strong></a></li>
+        <li><a href="#2-协程的核心概念-2">2. <strong>协程的核心概念</strong></a>
+          <ol>
+            <li><a href="#a-挂起函数suspend-function-2"><strong>a. 挂起函数（Suspend Function）</strong></a></li>
+            <li><a href="#b-协程构建器-2"><strong>b. 协程构建器</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-协程调度器dispatchers-1">3. <strong>协程调度器（Dispatchers）</strong></a></li>
+        <li><a href="#4-结构化并发">4. <strong>结构化并发</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#三viewmodelscope-的实际应用">三、viewModelScope 的实际应用</a>
+      <ol>
+        <li><a href="#1-基本用法">1. <strong>基本用法</strong></a></li>
+        <li><a href="#2-错误处理">2. <strong>错误处理</strong></a></li>
+        <li><a href="#3-取消与超时">3. <strong>取消与超时</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#四协程的底层原理">四、协程的底层原理</a>
+      <ol>
+        <li><a href="#1-状态机模型">1. <strong>状态机模型</strong></a></li>
+        <li><a href="#2-协程上下文">2. <strong>协程上下文</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#五最佳实践">五、最佳实践</a>
+      <ol>
+        <li><a href="#1-viewmodel-中的协程模式">1. <strong>ViewModel 中的协程模式</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#六实际项目架构示例">六、实际项目架构示例</a></li>
+    <li><a href="#总结">总结</a>
+      <ol>
+        <li><a href="#viewmodelscope协程作用域-的核心价值"><strong>viewModelScope(协程作用域) 的核心价值：</strong></a></li>
+        <li><a href="#协程的关键特性"><strong>协程的关键特性：</strong></a></li>
+        <li><a href="#最佳实践原则"><strong>最佳实践原则：</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/androidcoder/p/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 9 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span>目录</span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1-协程是什么">1. <strong>协程是什么？</strong></a></li>
+        <li><a href="#2-协程的核心概念">2. <strong>协程的核心概念</strong></a>
+          <ol>
+            <li><a href="#a-挂起函数suspend-function"><strong>a. 挂起函数（Suspend Function）</strong></a></li>
+            <li><a href="#b-协程构建器"><strong>b. 协程构建器</strong></a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#一viewmodelscope-详解">一、viewModelScope 详解</a>
+      <ol>
+        <li><a href="#1-什么是-viewmodelscope">1. <strong>什么是 viewModelScope？</strong></a></li>
+        <li><a href="#2-核心特性">2. <strong>核心特性</strong></a>
+          <ol>
+            <li><a href="#a-自动取消机制"><strong>a. 自动取消机制</strong></a></li>
+            <li><a href="#b-生命周期绑定"><strong>b. 生命周期绑定</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-内部工作原理">3. <strong>内部工作原理</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#二kotlin-协程深度解析">二、Kotlin 协程深度解析</a>
+      <ol>
+        <li><a href="#1-协程是什么-1">1. <strong>协程是什么？</strong></a></li>
+        <li><a href="#2-协程的核心概念-1">2. <strong>协程的核心概念</strong></a>
+          <ol>
+            <li><a href="#a-挂起函数suspend-function-1"><strong>a. 挂起函数（Suspend Function）</strong></a></li>
+            <li><a href="#b-协程构建器-1"><strong>b. 协程构建器</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-协程调度器dispatchers">3. <strong>协程调度器（Dispatchers）</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#一viewmodelscope-详解-1">一、viewModelScope 详解</a>
+      <ol>
+        <li><a href="#1-什么是-viewmodelscope-1">1. <strong>什么是 viewModelScope？</strong></a></li>
+        <li><a href="#2-核心特性-1">2. <strong>核心特性</strong></a>
+          <ol>
+            <li><a href="#a-自动取消机制-1"><strong>a. 自动取消机制</strong></a></li>
+            <li><a href="#b-生命周期绑定-1"><strong>b. 生命周期绑定</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-内部工作原理-1">3. <strong>内部工作原理</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#二kotlin-协程深度解析-1">二、Kotlin 协程深度解析</a>
+      <ol>
+        <li><a href="#1-协程是什么-2">1. <strong>协程是什么？</strong></a></li>
+        <li><a href="#2-协程的核心概念-2">2. <strong>协程的核心概念</strong></a>
+          <ol>
+            <li><a href="#a-挂起函数suspend-function-2"><strong>a. 挂起函数（Suspend Function）</strong></a></li>
+            <li><a href="#b-协程构建器-2"><strong>b. 协程构建器</strong></a></li>
+          </ol>
+        </li>
+        <li><a href="#3-协程调度器dispatchers-1">3. <strong>协程调度器（Dispatchers）</strong></a></li>
+        <li><a href="#4-结构化并发">4. <strong>结构化并发</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#三viewmodelscope-的实际应用">三、viewModelScope 的实际应用</a>
+      <ol>
+        <li><a href="#1-基本用法">1. <strong>基本用法</strong></a></li>
+        <li><a href="#2-错误处理">2. <strong>错误处理</strong></a></li>
+        <li><a href="#3-取消与超时">3. <strong>取消与超时</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#四协程的底层原理">四、协程的底层原理</a>
+      <ol>
+        <li><a href="#1-状态机模型">1. <strong>状态机模型</strong></a></li>
+        <li><a href="#2-协程上下文">2. <strong>协程上下文</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#五最佳实践">五、最佳实践</a>
+      <ol>
+        <li><a href="#1-viewmodel-中的协程模式">1. <strong>ViewModel 中的协程模式</strong></a></li>
+      </ol>
+    </li>
+    <li><a href="#六实际项目架构示例">六、实际项目架构示例</a></li>
+    <li><a href="#总结">总结</a>
+      <ol>
+        <li><a href="#viewmodelscope协程作用域-的核心价值"><strong>viewModelScope(协程作用域) 的核心价值：</strong></a></li>
+        <li><a href="#协程的关键特性"><strong>协程的关键特性：</strong></a></li>
+        <li><a href="#最佳实践原则"><strong>最佳实践原则：</strong></a></li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <h1 id="协程">协程
+</h1><h3 id="1-协程是什么">1. <strong>协程是什么？</strong>
+</h3><p><strong>协程是轻量级线程</strong>，但不是线程。一个线程内可以运行成千上万个协程。</p>
+<p>Kotlin 协程是一种轻量级的线程机制，用于优雅地处理异步任务。它通过挂起函数（<em>suspend</em>）和协程构建器（如 <em>launch</em> 和 <em>async</em>）实现非阻塞式的异步编程，简化了复杂的回调逻辑。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 线程 vs 协程对比
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">compareThreadAndCoroutine</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 线程 - 重量级
+</span></span></span><span class="line"><span class="cl">    <span class="n">repeat</span><span class="p">(</span><span class="mi">100_000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Thread</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">            <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1000L</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Thread </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}.</span><span class="n">start</span><span class="p">()</span>  <span class="c1">// 创建10万个线程 - 内存爆炸！
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 协程 - 轻量级
+</span></span></span><span class="line"><span class="cl">    <span class="n">repeat</span><span class="p">(</span><span class="mi">100_000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">delay</span><span class="p">(</span><span class="mi">1000L</span><span class="p">)</span>  <span class="c1">// 非阻塞挂起
+</span></span></span><span class="line"><span class="cl">            <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Coroutine </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>  <span class="c1">// 创建10万个协程 - 轻松应对
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-协程的核心概念">2. <strong>协程的核心概念</strong>
+</h3><h4 id="a-挂起函数suspend-function"><strong>a. 挂起函数（Suspend Function）</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 普通函数
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">doSomething</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 阻塞当前线程
+</span></span></span><span class="line"><span class="cl">    <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 挂起函数
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">doSomethingSuspended</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 挂起协程，不阻塞线程
+</span></span></span><span class="line"><span class="cl">    <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;恢复执行&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="b-协程构建器"><strong>b. 协程构建器</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 三种主要构建器
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. launch - 启动一个不返回结果的协程
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">job</span> <span class="p">=</span> <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;launch: 后台任务&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. async - 启动一个返回 Deferred 结果的协程
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">deferred</span> <span class="p">=</span> <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;async: 计算任务&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;结果&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">deferred</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>  <span class="c1">// 获取结果
+</span></span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. runBlocking - 阻塞当前线程，主要用于测试
+</span></span></span><span class="line"><span class="cl">    <span class="n">runBlocking</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;runBlocking: 阻塞测试&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="全面解析-viewmodelscope-和-kotlin-协程">全面解析 viewModelScope 和 Kotlin 协程
+</h1><h2 id="一viewmodelscope-详解">一、viewModelScope 详解
+</h2><h3 id="1-什么是-viewmodelscope">1. <strong>什么是 viewModelScope？</strong>
+</h3><p><code>viewModelScope</code>是 <strong>ViewModel 的 Kotlin 扩展属性</strong>，它是 Android 架构组件的一部分，专门为 ViewModel 设计的协程作用域。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 在 ViewModel 中
+</span></span></span><span class="line"><span class="cl"><span class="k">val</span> <span class="py">ViewModel</span><span class="p">.</span><span class="n">viewModelScope</span><span class="p">:</span> <span class="n">CoroutineScope</span>
+</span></span><span class="line"><span class="cl">    <span class="k">get</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">scope</span><span class="p">:</span> <span class="n">CoroutineScope</span><span class="p">?</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getTag</span><span class="p">(</span><span class="n">JOB_KEY</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">scope</span> <span class="o">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">scope</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">setTagIfAbsent</span><span class="p">(</span><span class="n">JOB_KEY</span><span class="p">,</span> <span class="n">CloseableCoroutineScope</span><span class="p">(</span><span class="n">SupervisorJob</span><span class="p">()</span> <span class="p">+</span> <span class="nc">Dispatchers</span><span class="p">.</span><span class="nc">Main</span><span class="p">.</span><span class="n">immediate</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-核心特性">2. <strong>核心特性</strong>
+</h3><h4 id="a-自动取消机制"><strong>a. 自动取消机制</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">fetchData</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 当 ViewModel 被清除时，这个协程自动取消
+</span></span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">loadData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_liveData</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="k">data</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// ViewModel 的 onCleared 方法
+</span></span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCleared</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">super</span><span class="p">.</span><span class="n">onCleared</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 内部自动调用：viewModelScope.cancel()
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="b-生命周期绑定"><strong>b. 生命周期绑定</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">Activity/Fragment 生命周期：
+</span></span><span class="line"><span class="cl">onCreate → onStart → onResume → onPause → onStop → onDestroy
+</span></span><span class="line"><span class="cl">                                    ↓
+</span></span><span class="line"><span class="cl">                          ViewModel 的 onCleared
+</span></span><span class="line"><span class="cl">                                    ↓
+</span></span><span class="line"><span class="cl">                      viewModelScope 自动取消所有协程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-内部工作原理">3. <strong>内部工作原理</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 简化版的 viewModelScope 实现
+</span></span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 手动实现的类似 viewModelScope
+</span></span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">job</span> <span class="p">=</span> <span class="n">SupervisorJob</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">scope</span> <span class="p">=</span> <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span> <span class="p">+</span> <span class="n">job</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCleared</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">super</span><span class="p">.</span><span class="n">onCleared</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">scope</span><span class="p">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1">// 取消所有协程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">fetchData</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">scope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 协程代码
+</span></span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="二kotlin-协程深度解析">二、Kotlin 协程深度解析
+</h2><h3 id="1-协程是什么-1">1. <strong>协程是什么？</strong>
+</h3><p><strong>协程是轻量级线程</strong>，但不是线程。一个线程内可以运行成千上万个协程。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 线程 vs 协程对比
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">compareThreadAndCoroutine</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 线程 - 重量级
+</span></span></span><span class="line"><span class="cl">    <span class="n">repeat</span><span class="p">(</span><span class="mi">100_000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Thread</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">            <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1000L</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Thread </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}.</span><span class="n">start</span><span class="p">()</span>  <span class="c1">// 创建10万个线程 - 内存爆炸！
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 协程 - 轻量级
+</span></span></span><span class="line"><span class="cl">    <span class="n">repeat</span><span class="p">(</span><span class="mi">100_000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">delay</span><span class="p">(</span><span class="mi">1000L</span><span class="p">)</span>  <span class="c1">// 非阻塞挂起
+</span></span></span><span class="line"><span class="cl">            <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Coroutine </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>  <span class="c1">// 创建10万个协程 - 轻松应对
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-协程的核心概念-1">2. <strong>协程的核心概念</strong>
+</h3><h4 id="a-挂起函数suspend-function-1"><strong>a. 挂起函数（Suspend Function）</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 普通函数
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">doSomething</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 阻塞当前线程
+</span></span></span><span class="line"><span class="cl">    <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 挂起函数
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">doSomethingSuspended</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 挂起协程，不阻塞线程
+</span></span></span><span class="line"><span class="cl">    <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;恢复执行&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="b-协程构建器-1"><strong>b. 协程构建器</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 三种主要构建器
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. launch - 启动一个不返回结果的协程
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">job</span> <span class="p">=</span> <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;launch: 后台任务&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. async - 启动一个返回 Deferred 结果的协程
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">deferred</span> <span class="p">=</span> <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;async: 计算任务&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;结果&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">deferred</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>  <span class="c1">// 获取结果
+</span></span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. runBlocking - 阻塞当前线程，主要用于测试
+</span></span></span><span class="line"><span class="cl">    <span class="n">runBlocking</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;runBlocking: 阻塞测试&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-协程调度器dispatchers">3. <strong>协程调度器（Dispatchers）</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">showDispatchers</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. Dispatchers.Main - 主线程，更新UI
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">textView</span><span class="p">.</span><span class="n">text</span> <span class="p">=</span> <span class="s2">&#34;UI更新&#34;</span>  <span class="c1">// 必须在主线程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. Dispatchers.IO - IO操作
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">IO</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">downloadFile</span><span class="p">()</span>  <span class="c1">// 网络请求
+</span></span></span><span class="line"><span class="cl">        <span class="n">withContext</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">updateUI</span><span class="p">(</span><span class="k">data</span><span class="p">)</span>  <span class="c1">// 切回主线程
+</span></span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. Dispatchers.Default - CPU密集型计算
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Default</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">calculatePrimeNumbers</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>  <span class="c1">// 复杂计算
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 4. Dispatchers.Unconfined - 不指定线程（不常用）
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Unconfined</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 在调用者线程启动，在恢复时可能在不同线程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="全面解析-viewmodelscope-和-kotlin-协程-1">全面解析 viewModelScope 和 Kotlin 协程
+</h1><h2 id="一viewmodelscope-详解-1">一、viewModelScope 详解
+</h2><h3 id="1-什么是-viewmodelscope-1">1. <strong>什么是 viewModelScope？</strong>
+</h3><p><code>viewModelScope</code>是 <strong>ViewModel 的 Kotlin 扩展属性</strong>，它是 Android 架构组件的一部分，专门为 ViewModel 设计的协程作用域。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 在 ViewModel 中
+</span></span></span><span class="line"><span class="cl"><span class="k">val</span> <span class="py">ViewModel</span><span class="p">.</span><span class="n">viewModelScope</span><span class="p">:</span> <span class="n">CoroutineScope</span>
+</span></span><span class="line"><span class="cl">    <span class="k">get</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">scope</span><span class="p">:</span> <span class="n">CoroutineScope</span><span class="p">?</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getTag</span><span class="p">(</span><span class="n">JOB_KEY</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">scope</span> <span class="o">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">scope</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">setTagIfAbsent</span><span class="p">(</span><span class="n">JOB_KEY</span><span class="p">,</span> <span class="n">CloseableCoroutineScope</span><span class="p">(</span><span class="n">SupervisorJob</span><span class="p">()</span> <span class="p">+</span> <span class="nc">Dispatchers</span><span class="p">.</span><span class="nc">Main</span><span class="p">.</span><span class="n">immediate</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-核心特性-1">2. <strong>核心特性</strong>
+</h3><h4 id="a-自动取消机制-1"><strong>a. 自动取消机制</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">fetchData</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 当 ViewModel 被清除时，这个协程自动取消
+</span></span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">loadData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_liveData</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="k">data</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// ViewModel 的 onCleared 方法
+</span></span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCleared</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">super</span><span class="p">.</span><span class="n">onCleared</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 内部自动调用：viewModelScope.cancel()
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="b-生命周期绑定-1"><strong>b. 生命周期绑定</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">Activity/Fragment 生命周期：
+</span></span><span class="line"><span class="cl">onCreate → onStart → onResume → onPause → onStop → onDestroy
+</span></span><span class="line"><span class="cl">                                    ↓
+</span></span><span class="line"><span class="cl">                          ViewModel 的 onCleared
+</span></span><span class="line"><span class="cl">                                    ↓
+</span></span><span class="line"><span class="cl">                      viewModelScope 自动取消所有协程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-内部工作原理-1">3. <strong>内部工作原理</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 简化版的 viewModelScope 实现
+</span></span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 手动实现的类似 viewModelScope
+</span></span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">job</span> <span class="p">=</span> <span class="n">SupervisorJob</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">scope</span> <span class="p">=</span> <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span> <span class="p">+</span> <span class="n">job</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCleared</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">super</span><span class="p">.</span><span class="n">onCleared</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">scope</span><span class="p">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1">// 取消所有协程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">fetchData</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">scope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 协程代码
+</span></span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="二kotlin-协程深度解析-1">二、Kotlin 协程深度解析
+</h2><h3 id="1-协程是什么-2">1. <strong>协程是什么？</strong>
+</h3><p><strong>协程是轻量级线程</strong>，但不是线程。一个线程内可以运行成千上万个协程。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 线程 vs 协程对比
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">compareThreadAndCoroutine</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 线程 - 重量级
+</span></span></span><span class="line"><span class="cl">    <span class="n">repeat</span><span class="p">(</span><span class="mi">100_000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Thread</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">            <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1000L</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Thread </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}.</span><span class="n">start</span><span class="p">()</span>  <span class="c1">// 创建10万个线程 - 内存爆炸！
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 协程 - 轻量级
+</span></span></span><span class="line"><span class="cl">    <span class="n">repeat</span><span class="p">(</span><span class="mi">100_000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">delay</span><span class="p">(</span><span class="mi">1000L</span><span class="p">)</span>  <span class="c1">// 非阻塞挂起
+</span></span></span><span class="line"><span class="cl">            <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Coroutine </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>  <span class="c1">// 创建10万个协程 - 轻松应对
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-协程的核心概念-2">2. <strong>协程的核心概念</strong>
+</h3><h4 id="a-挂起函数suspend-function-2"><strong>a. 挂起函数（Suspend Function）</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 普通函数
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">doSomething</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 阻塞当前线程
+</span></span></span><span class="line"><span class="cl">    <span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 挂起函数
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">doSomethingSuspended</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 挂起协程，不阻塞线程
+</span></span></span><span class="line"><span class="cl">    <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;恢复执行&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="b-协程构建器-2"><strong>b. 协程构建器</strong>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 三种主要构建器
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. launch - 启动一个不返回结果的协程
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">job</span> <span class="p">=</span> <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;launch: 后台任务&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. async - 启动一个返回 Deferred 结果的协程
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">deferred</span> <span class="p">=</span> <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;async: 计算任务&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;结果&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">deferred</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>  <span class="c1">// 获取结果
+</span></span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. runBlocking - 阻塞当前线程，主要用于测试
+</span></span></span><span class="line"><span class="cl">    <span class="n">runBlocking</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;runBlocking: 阻塞测试&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-协程调度器dispatchers-1">3. <strong>协程调度器（Dispatchers）</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">showDispatchers</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. Dispatchers.Main - 主线程，更新UI
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">textView</span><span class="p">.</span><span class="n">text</span> <span class="p">=</span> <span class="s2">&#34;UI更新&#34;</span>  <span class="c1">// 必须在主线程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. Dispatchers.IO - IO操作
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">IO</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">downloadFile</span><span class="p">()</span>  <span class="c1">// 网络请求
+</span></span></span><span class="line"><span class="cl">        <span class="n">withContext</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">updateUI</span><span class="p">(</span><span class="k">data</span><span class="p">)</span>  <span class="c1">// 切回主线程
+</span></span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. Dispatchers.Default - CPU密集型计算
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Default</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">calculatePrimeNumbers</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>  <span class="c1">// 复杂计算
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 4. Dispatchers.Unconfined - 不指定线程（不常用）
+</span></span></span><span class="line"><span class="cl">    <span class="n">CoroutineScope</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Unconfined</span><span class="p">).</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 在调用者线程启动，在恢复时可能在不同线程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="4-结构化并发">4. <strong>结构化并发</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 1. 非结构化并发（不推荐）
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">unstructuredConcurrency</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">GlobalScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 协程可能泄漏，无法管理
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 2. 结构化并发（推荐）
+</span></span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyActivity</span> <span class="p">:</span> <span class="n">AppCompatActivity</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建与生命周期绑定的作用域
+</span></span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">scope</span> <span class="p">=</span> <span class="n">CoroutineScope</span><span class="p">(</span><span class="n">SupervisorJob</span><span class="p">()</span> <span class="p">+</span> <span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 启动协程
+</span></span></span><span class="line"><span class="cl">        <span class="n">scope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">user</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">fetchUser</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">posts</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">fetchPosts</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">comments</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">fetchComments</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 等待所有结果
+</span></span></span><span class="line"><span class="cl">            <span class="n">updateUI</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">await</span><span class="p">(),</span> <span class="n">posts</span><span class="p">.</span><span class="n">await</span><span class="p">(),</span> <span class="n">comments</span><span class="p">.</span><span class="n">await</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onDestroy</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">super</span><span class="p">.</span><span class="n">onDestroy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">scope</span><span class="p">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1">// 取消所有协程
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="三viewmodelscope-的实际应用">三、viewModelScope 的实际应用
+</h2><h3 id="1-基本用法">1. <strong>基本用法</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">UserViewModel</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">userRepository</span><span class="p">:</span> <span class="n">UserRepository</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">_users</span> <span class="p">=</span> <span class="n">MutableLiveData</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">User</span><span class="p">&gt;&gt;()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">users</span><span class="p">:</span> <span class="n">LiveData</span><span class="p">&lt;</span><span class="n">List</span><span class="p">&lt;</span><span class="n">User</span><span class="p">&gt;&gt;</span> <span class="p">=</span> <span class="n">_users</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">_loading</span> <span class="p">=</span> <span class="n">MutableLiveData</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">loading</span><span class="p">:</span> <span class="n">LiveData</span><span class="p">&lt;</span><span class="n">Boolean</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">_loading</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取用户列表
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadUsers</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_loading</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="k">true</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 在IO线程执行网络请求
+</span></span></span><span class="line"><span class="cl">                <span class="k">val</span> <span class="py">userList</span> <span class="p">=</span> <span class="n">withContext</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">IO</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">userRepository</span><span class="p">.</span><span class="n">getUsers</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                <span class="n">_users</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="n">userList</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 处理异常
+</span></span></span><span class="line"><span class="cl">                <span class="n">_users</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="n">emptyList</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">_loading</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="k">false</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 并行请求多个数据
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadUserData</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">userDeferred</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">userRepository</span><span class="p">.</span><span class="n">getUser</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">postsDeferred</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">userRepository</span><span class="p">.</span><span class="n">getUserPosts</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">friendsDeferred</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">userRepository</span><span class="p">.</span><span class="n">getUserFriends</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 等待所有并行请求完成
+</span></span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">user</span> <span class="p">=</span> <span class="n">userDeferred</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">posts</span> <span class="p">=</span> <span class="n">postsDeferred</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">friends</span> <span class="p">=</span> <span class="n">friendsDeferred</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 合并数据
+</span></span></span><span class="line"><span class="cl">            <span class="n">_users</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">posts</span> <span class="p">=</span> <span class="n">posts</span><span class="p">,</span> <span class="n">friends</span> <span class="p">=</span> <span class="n">friends</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-错误处理">2. <strong>错误处理</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SafeViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 方式1：try-catch
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadDataWithTryCatch</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">fetchData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 处理数据
+</span></span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">IOException</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 处理网络异常
+</span></span></span><span class="line"><span class="cl">                <span class="n">showError</span><span class="p">(</span><span class="s2">&#34;网络错误: </span><span class="si">${e.message}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 处理其他异常
+</span></span></span><span class="line"><span class="cl">                <span class="n">showError</span><span class="p">(</span><span class="s2">&#34;发生错误: </span><span class="si">${e.message}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 方式2：CoroutineExceptionHandler
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadDataWithExceptionHandler</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">exceptionHandler</span> <span class="p">=</span> <span class="n">CoroutineExceptionHandler</span> <span class="p">{</span> <span class="n">_</span><span class="p">,</span> <span class="n">exception</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">showError</span><span class="p">(</span><span class="s2">&#34;协程异常: </span><span class="si">${exception.message}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span><span class="p">(</span><span class="n">exceptionHandler</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">fetchData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 处理数据
+</span></span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 方式3：使用 Result 封装
+</span></span></span><span class="line"><span class="cl">    <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">loadDataSafely</span><span class="p">():</span> <span class="n">Result</span><span class="p">&lt;</span><span class="n">Data</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">withContext</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">IO</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="nd">@withContext</span> <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nc">Result</span><span class="p">.</span><span class="n">success</span><span class="p">(</span><span class="n">repository</span><span class="p">.</span><span class="n">fetchData</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nc">Result</span><span class="p">.</span><span class="n">failure</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3-取消与超时">3. <strong>取消与超时</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">CancellableViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadDataWithTimeout</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 1. 设置超时
+</span></span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">withTimeoutOrNull</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// 5秒超时
+</span></span></span><span class="line"><span class="cl">                <span class="n">repository</span><span class="p">.</span><span class="n">fetchLargeData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="k">data</span> <span class="o">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 超时处理
+</span></span></span><span class="line"><span class="cl">                <span class="n">showError</span><span class="p">(</span><span class="s2">&#34;请求超时&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">cancellableOperation</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">job</span> <span class="p">=</span> <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">repeat</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="p">{</span> <span class="n">i</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 检查协程是否活跃
+</span></span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">isActive</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 模拟工作
+</span></span></span><span class="line"><span class="cl">                    <span class="n">delay</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;处理 </span><span class="si">$i</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 清理资源
+</span></span></span><span class="line"><span class="cl">                    <span class="n">cleanup</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">return</span><span class="nd">@launch</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 3秒后取消
+</span></span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">delay</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">job</span><span class="p">.</span><span class="n">cancel</span><span class="p">(</span><span class="s2">&#34;用户取消&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="四协程的底层原理">四、协程的底层原理
+</h2><h3 id="1-状态机模型">1. <strong>状态机模型</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 挂起函数的编译后代码类似状态机
+</span></span></span><span class="line"><span class="cl"><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">fetchUserData</span><span class="p">():</span> <span class="n">User</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">token</span> <span class="p">=</span> <span class="n">requestToken</span><span class="p">()</span>      <span class="c1">// 挂起点1
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">user</span> <span class="p">=</span> <span class="n">fetchUser</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>     <span class="c1">// 挂起点2
+</span></span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">user</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 编译后的伪代码
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">fetchUserData</span><span class="p">(</span><span class="n">continuation</span><span class="p">:</span> <span class="n">Continuation</span><span class="p">):</span> <span class="n">Any</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">when</span> <span class="p">(</span><span class="n">continuation</span><span class="p">.</span><span class="n">label</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="mi">0</span> <span class="o">-&gt;</span> <span class="p">{</span>  <span class="c1">// 初始状态
+</span></span></span><span class="line"><span class="cl">            <span class="n">continuation</span><span class="p">.</span><span class="n">label</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">requestToken</span><span class="p">(</span><span class="n">continuation</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="mi">1</span> <span class="o">-&gt;</span> <span class="p">{</span>  <span class="c1">// 获取token后
+</span></span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">token</span> <span class="p">=</span> <span class="n">continuation</span><span class="p">.</span><span class="n">result</span> <span class="k">as</span> <span class="n">String</span>
+</span></span><span class="line"><span class="cl">            <span class="n">continuation</span><span class="p">.</span><span class="n">label</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">fetchUser</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">continuation</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="mi">2</span> <span class="o">-&gt;</span> <span class="p">{</span>  <span class="c1">// 获取用户后
+</span></span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">user</span> <span class="p">=</span> <span class="n">continuation</span><span class="p">.</span><span class="n">result</span> <span class="k">as</span> <span class="n">User</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">user</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-协程上下文">2. <strong>协程上下文</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 协程上下文包含多个元素
+</span></span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">showCoroutineContext</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">context</span> <span class="p">=</span> <span class="nc">Dispatchers</span><span class="p">.</span><span class="n">Main</span> <span class="p">+</span> 
+</span></span><span class="line"><span class="cl">                  <span class="n">CoroutineName</span><span class="p">(</span><span class="s2">&#34;MyCoroutine&#34;</span><span class="p">)</span> <span class="p">+</span> 
+</span></span><span class="line"><span class="cl">                  <span class="n">CoroutineExceptionHandler</span> <span class="p">{</span> <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="o">-&gt;</span> 
+</span></span><span class="line"><span class="cl">                      <span class="n">println</span><span class="p">(</span><span class="s2">&#34;异常: </span><span class="si">$e</span><span class="s2">&#34;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">                  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;协程名: </span><span class="si">${coroutineContext[CoroutineName]}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;调度器: </span><span class="si">${coroutineContext[CoroutineDispatcher]}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="五最佳实践">五、最佳实践
+</h2><h3 id="1-viewmodel-中的协程模式">1. <strong>ViewModel 中的协程模式</strong>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">BestPracticeViewModel</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 模式1：单一数据流
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadDataSingle</span><span class="p">()</span> <span class="p">=</span> <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">_state</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="nc">State</span><span class="p">.</span><span class="n">Loading</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">val</span> <span class="py">data</span> <span class="p">=</span> <span class="n">repository</span><span class="p">.</span><span class="n">fetchData</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_state</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="nc">State</span><span class="p">.</span><span class="n">Success</span><span class="p">(</span><span class="k">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_state</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="nc">State</span><span class="p">.</span><span class="n">Error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 模式2：并行数据流
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">loadMultipleData</span><span class="p">()</span> <span class="p">=</span> <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">userFlow</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">repository</span><span class="p">.</span><span class="n">getUser</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">postsFlow</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> <span class="n">repository</span><span class="p">.</span><span class="n">getPosts</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">_userState</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="n">userFlow</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">_postsState</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="n">postsFlow</span><span class="p">.</span><span class="n">await</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 模式3：使用 Flow
+</span></span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">userData</span><span class="p">:</span> <span class="n">Flow</span><span class="p">&lt;</span><span class="n">User</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">flow</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">emit</span><span class="p">(</span><span class="n">repository</span><span class="p">.</span><span class="n">getUserStream</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}.</span><span class="n">flowOn</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">IO</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">     <span class="p">.</span><span class="k">catch</span> <span class="p">{</span> <span class="n">e</span> <span class="o">-&gt;</span> 
+</span></span><span class="line"><span class="cl">         <span class="n">emit</span><span class="p">(</span><span class="nc">User</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">     <span class="p">}</span>
+</span></span><span class="line"><span class="cl">     <span class="p">.</span><span class="n">stateIn</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">         <span class="n">scope</span> <span class="p">=</span> <span class="n">viewModelScope</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">         <span class="n">started</span> <span class="p">=</span> <span class="nc">SharingStarted</span><span class="p">.</span><span class="n">WhileSubscribed</span><span class="p">(</span><span class="mi">5000</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">         <span class="n">initialValue</span> <span class="p">=</span> <span class="nc">User</span><span class="p">.</span><span class="n">Loading</span>
+</span></span><span class="line"><span class="cl">     <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="六实际项目架构示例">六、实际项目架构示例
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// 完整的 MVVM + 协程 + Flow 架构
+</span></span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">UserViewModel</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">userRepository</span><span class="p">:</span> <span class="n">UserRepository</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">savedStateHandle</span><span class="p">:</span> <span class="n">SavedStateHandle</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="p">:</span> <span class="n">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// StateFlow 状态管理
+</span></span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">_uiState</span> <span class="p">=</span> <span class="n">MutableStateFlow</span><span class="p">&lt;</span><span class="n">UserUiState</span><span class="p">&gt;(</span><span class="nc">UserUiState</span><span class="p">.</span><span class="n">Loading</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">uiState</span><span class="p">:</span> <span class="n">StateFlow</span><span class="p">&lt;</span><span class="n">UserUiState</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">_uiState</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从保存的状态恢复
+</span></span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">userId</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="n">savedStateHandle</span><span class="p">[</span><span class="s2">&#34;userId&#34;</span><span class="p">]</span> <span class="o">?:</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">init</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loadUser</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用 Flow 收集数据
+</span></span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">fun</span> <span class="nf">loadUser</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从 Room 数据库观察数据变化
+</span></span></span><span class="line"><span class="cl">            <span class="n">userRepository</span><span class="p">.</span><span class="n">observeUser</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">flowOn</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="n">IO</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="k">catch</span> <span class="p">{</span> <span class="n">e</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">_uiState</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="nc">UserUiState</span><span class="p">.</span><span class="n">Error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">message</span> <span class="o">?:</span> <span class="s2">&#34;未知错误&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">collect</span> <span class="p">{</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">_uiState</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="n">user</span> <span class="o">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="nc">UserUiState</span><span class="p">.</span><span class="n">Success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="nc">UserUiState</span><span class="p">.</span><span class="n">Error</span><span class="p">(</span><span class="s2">&#34;用户不存在&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 刷新数据
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">refreshUser</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">viewModelScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_uiState</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="nc">UserUiState</span><span class="p">.</span><span class="n">Loading</span>
+</span></span><span class="line"><span class="cl">            <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">userRepository</span><span class="p">.</span><span class="n">refreshUser</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">_uiState</span><span class="p">.</span><span class="k">value</span> <span class="p">=</span> <span class="nc">UserUiState</span><span class="p">.</span><span class="n">Error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">message</span> <span class="o">?:</span> <span class="s2">&#34;刷新失败&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 密封类表示状态
+</span></span></span><span class="line"><span class="cl">    <span class="k">sealed</span> <span class="k">class</span> <span class="nc">UserUiState</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">object</span> <span class="nc">Loading</span> <span class="p">:</span> <span class="n">UserUiState</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">data</span> <span class="k">class</span> <span class="nc">Success</span><span class="p">(</span><span class="k">val</span> <span class="py">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="p">:</span> <span class="n">UserUiState</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">data</span> <span class="k">class</span> <span class="nc">Error</span><span class="p">(</span><span class="k">val</span> <span class="py">message</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">UserUiState</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Repository 层
+</span></span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">UserRepository</span> <span class="nd">@Inject</span> <span class="k">constructor</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">userApi</span><span class="p">:</span> <span class="n">UserApi</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">userDao</span><span class="p">:</span> <span class="n">UserDao</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 网络请求
+</span></span></span><span class="line"><span class="cl">    <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">refreshUser</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">user</span> <span class="p">=</span> <span class="n">userApi</span><span class="p">.</span><span class="n">getUser</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>  <span class="c1">// 网络请求
+</span></span></span><span class="line"><span class="cl">        <span class="n">userDao</span><span class="p">.</span><span class="n">insertUser</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>  <span class="c1">// 存入数据库
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 观察数据库变化
+</span></span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">observeUser</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">Flow</span><span class="p">&lt;</span><span class="n">User</span><span class="p">?&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">userDao</span><span class="p">.</span><span class="n">observeUserById</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结
+</h2><h3 id="viewmodelscope协程作用域-的核心价值"><strong>viewModelScope(协程作用域) 的核心价值：</strong>
+</h3><ol>
+<li></li>
+</ol>
+<p><strong>自动生命周期管理</strong> - 与 ViewModel 生命周期绑定</p>
+<ol start="2">
+<li></li>
+</ol>
+<p><strong>避免内存泄漏</strong> - ViewModel 销毁时自动取消协程</p>
+<ol start="3">
+<li></li>
+</ol>
+<p><strong>简化代码</strong> - 不需要手动管理协程作用域</p>
+<ol start="4">
+<li></li>
+</ol>
+<p><strong>线程安全</strong> - 默认在主线程启动</p>
+<h3 id="协程的关键特性"><strong>协程的关键特性：</strong>
+</h3><ol>
+<li></li>
+</ol>
+<p><strong>轻量级</strong> - 一个线程可运行大量协程</p>
+<ol start="2">
+<li></li>
+</ol>
+<p><strong>结构化并发</strong> - 父子协程关系明确</p>
+<ol start="3">
+<li></li>
+</ol>
+<p><strong>挂起非阻塞</strong> - 提高线程利用率</p>
+<ol start="4">
+<li></li>
+</ol>
+<p><strong>流式API</strong> - 支持 Flow 响应式编程</p>
+<h3 id="最佳实践原则"><strong>最佳实践原则：</strong>
+</h3><ol>
+<li></li>
+</ol>
+<p>始终在 ViewModel 中使用 <code>viewModelScope</code>启动协程</p>
+<ol start="2">
+<li></li>
+</ol>
+<p>耗时操作切换到 <code>Dispatchers.IO</code></p>
+<ol start="3">
+<li></li>
+</ol>
+<p>UI 更新切换回 <code>Dispatchers.Main</code></p>
+<ol start="4">
+<li></li>
+</ol>
+<p>正确处理异常和取消</p>
+<ol start="5">
+<li></li>
+</ol>
+<p>使用 Flow 进行响应式数据流处理</p>
+<p>通过合理使用 <code>viewModelScope</code>和协程，可以构建出高效、可维护、无泄漏的 Android 应用架构。</p>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under <a class="link" href="https://creativecommons.org/licenses/by-nc-sa/4.0/"  target="_blank" rel="noopener"
+    >CC BY-NC-SA 4.0</a></span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 我的安卓起源
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/androidcoder\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/androidcoder/ts/main.621b6f8fb65445639c0cbf4f6c6aecaeb9f9267fb52609e5471f7bc5fbd6141c.js" defer></script>
+
+
+    </body>
+</html>

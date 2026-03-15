@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>隐私 on 我的安卓起源</title><link>https://gunubckah.github.io/androidcoder/tags/%E9%9A%90%E7%A7%81/</link><description>Recent content in 隐私 on 我的安卓起源</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Mon, 26 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://gunubckah.github.io/androidcoder/tags/%E9%9A%90%E7%A7%81/index.xml" rel="self" type="application/rss+xml"/><item><title>短代码</title><link>https://gunubckah.github.io/androidcoder/p/%E7%9F%AD%E4%BB%A3%E7%A0%81/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://gunubckah.github.io/androidcoder/p/%E7%9F%AD%E4%BB%A3%E7%A0%81/</guid><description>&lt;p&gt;Stack 主题还提供了一些自定义短代码来增强你的内容。&lt;/p&gt;
+&lt;h2 id="引用-quote"&gt;引用 (Quote)
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;quote&lt;/code&gt; 短代码允许你显示带有作者、来源和 URL 的引用。&lt;/p&gt;
+&lt;blockquote&gt;
+ &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;&lt;span class="cite"&gt;&lt;span&gt;― &lt;/span&gt;&lt;span&gt;一位名人, &lt;/span&gt;&lt;a href="https://zh.wikipedia.org/wiki/Book"&gt;&lt;cite&gt;他们写的书&lt;/cite&gt;&lt;/a&gt;&lt;/span&gt;&lt;/blockquote&gt;
+&lt;h3 id="用法"&gt;用法
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; quote author=&amp;#34;作者名字&amp;#34; source=&amp;#34;文章标题&amp;#34; url=&amp;#34;https://example.com&amp;#34; &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;这里是引用内容。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; /quote &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="视频-video"&gt;视频 (Video)
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;video&lt;/code&gt; 短代码允许你嵌入自托管或远程视频文件。&lt;/p&gt;
+&lt;div class="video-wrapper"&gt;
+ &lt;video
+ controls
+ src="https://www.w3schools.com/html/mov_bbb.mp4"
+ 
+ 
+ 
+ &gt;
+ &lt;p&gt;
+ Your browser doesn't support HTML5 video. Here is a
+ &lt;a href="https://www.w3schools.com/html/mov_bbb.mp4"&gt;link to the video&lt;/a&gt; instead.
+ &lt;/p&gt;
+ &lt;/video&gt;
+&lt;/div&gt;
+
+&lt;h3 id="用法-1"&gt;用法
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; video src=&amp;#34;https://example.com/video.mp4&amp;#34; &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="bilibili"&gt;Bilibili
+&lt;/h2&gt;&lt;p&gt;嵌入来自 Bilibili 的视频。支持 &lt;code&gt;av&lt;/code&gt; 和 &lt;code&gt;bv&lt;/code&gt; 号。&lt;/p&gt;
+
+
+
+
+
+
+ 
+
+
+&lt;div class="video-wrapper"&gt;
+ &lt;iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;amp;high_quality=1&amp;amp;page=1&amp;bvid=BV1634y1t7xR"
+ scrolling="no"
+ frameborder="no"
+ framespacing="0"
+ allowfullscreen="true"
+ &gt;
+ &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;h3 id="用法-2"&gt;用法
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; bilibili &amp;#34;BV1634y1t7xR&amp;#34; &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="youtube"&gt;YouTube
+&lt;/h2&gt;&lt;p&gt;Hugo 内置的 YouTube 短代码。&lt;/p&gt;
+&lt;div class="video-wrapper"&gt;
+ &lt;iframe loading="lazy" 
+ src="https://www.youtube.com/embed/ZJthWmvUzzc" 
+ allowfullscreen 
+ title="YouTube Video"
+ &gt;
+ &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;h3 id="用法-3"&gt;用法
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; youtube ZJthWmvUzzc &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="腾讯视频-tencent-video"&gt;腾讯视频 (Tencent Video)
+&lt;/h2&gt;&lt;p&gt;嵌入来自腾讯视频的视频。&lt;/p&gt;
+
+&lt;div class="video-wrapper"&gt;
+ &lt;iframe src="https://v.qq.com/txp/iframe/player.html?vid=u00306ng962&amp;auto=0" 
+ scrolling="no" 
+ frameborder="no"
+ framespacing="0" 
+ allowfullscreen="true"
+ &gt;
+ &lt;/iframe&gt;
+&lt;/div&gt;
+&lt;h3 id="用法-4"&gt;用法
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; tencent &amp;#34;u00306ng962&amp;#34; &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="gitlab-snippet"&gt;GitLab Snippet
+&lt;/h2&gt;&lt;p&gt;嵌入来自 GitLab 的代码片段。&lt;/p&gt;
+&lt;script
+ type="application/javascript"
+ src="https://gitlab.com/-/snippets/2349278.js"
+&gt;&lt;/script&gt;
+&lt;h3 id="用法-5"&gt;用法
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{{&amp;lt; gitlab 2349278 &amp;gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="图表-diagrams"&gt;图表 (Diagrams)
+&lt;/h2&gt;&lt;p&gt;Stack 出箱即用地支持 &lt;a class="link" href="https://mermaid.js.org/" target="_blank" rel="noopener"
+ &gt;Mermaid&lt;/a&gt; 图表。&lt;/p&gt;
+&lt;pre class="mermaid" style="visibility:hidden"&gt;graph TD;
+ A--&gt;B;
+ A--&gt;C;
+ B--&gt;D;
+ C--&gt;D;&lt;/pre&gt;&lt;h3 id="用法-6"&gt;用法
+&lt;/h3&gt;&lt;p&gt;将你的 Mermaid 代码包裹在语言设置为 &lt;code&gt;mermaid&lt;/code&gt; 的代码块中。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;```mermaid
+graph TD;
+ A--&gt;B;
+ A--&gt;C;
+ B--&gt;D;
+ C--&gt;D;
+```&lt;/code&gt;&lt;/pre&gt;</description></item></channel></rss>

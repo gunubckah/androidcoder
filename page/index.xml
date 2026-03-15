@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pages on 我的安卓起源</title><link>https://gunubckah.github.io/androidcoder/page/</link><description>Recent content in Pages on 我的安卓起源</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Mon, 26 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://gunubckah.github.io/androidcoder/page/index.xml" rel="self" type="application/rss+xml"/><item><title>关于</title><link>https://gunubckah.github.io/androidcoder/%E5%85%B3%E4%BA%8E/</link><pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate><guid>https://gunubckah.github.io/androidcoder/%E5%85%B3%E4%BA%8E/</guid><description>&lt;h2 id="这是给谁看的"&gt;这是给谁看的？
+&lt;/h2&gt;&lt;p&gt;这是一个示例&lt;strong&gt;关于&lt;/strong&gt;页面。你可以用它来介绍你自己、你的博客或你的项目。&lt;/p&gt;
+&lt;h2 id="关于作者"&gt;关于作者
+&lt;/h2&gt;&lt;p&gt;你好！我是一个热衷于博客和开源的爱好者。我喜欢探索新技术并向社区分享我的经验。&lt;/p&gt;
+&lt;h3 id="我的旅程"&gt;我的旅程
+&lt;/h3&gt;&lt;p&gt;我在 10 多年前开始了我的 Web 开发之旅。自那以后，我参与了许多项目，从个人博客到大规模企业应用。&lt;/p&gt;
+&lt;h3 id="技能"&gt;技能
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;前端&lt;/strong&gt;: HTML, CSS, JavaScript, React, Vue&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;后端&lt;/strong&gt;: Node.js, Python, Go&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工具&lt;/strong&gt;: Git, Docker, Hugo, Neovim&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="联系我"&gt;联系我
+&lt;/h2&gt;&lt;p&gt;如果你有任何问题或只是想打个招呼，请随时联系我！&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;电子邮件&lt;/strong&gt;: &lt;a class="link" href="mailto:hello@example.com" &gt;hello@example.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Twitter&lt;/strong&gt;: &lt;a class="link" href="https://twitter.com/example" target="_blank" rel="noopener"
+ &gt;@example&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;GitHub&lt;/strong&gt;: &lt;a class="link" href="https://github.com/example" target="_blank" rel="noopener"
+ &gt;example&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;&amp;ldquo;Logic will get you from A to B. Imagination will take you everywhere.&amp;rdquo;&lt;br&gt;
+— &lt;em&gt;Albert Einstein&lt;/em&gt;&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;此页面由 AI 生成。&lt;/em&gt;&lt;/p&gt;</description></item><item><title>归档</title><link>https://gunubckah.github.io/androidcoder/archives/</link><pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate><guid>https://gunubckah.github.io/androidcoder/archives/</guid><description/></item><item><title>链接</title><link>https://gunubckah.github.io/androidcoder/%E9%93%BE%E6%8E%A5/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://gunubckah.github.io/androidcoder/%E9%93%BE%E6%8E%A5/</guid><description>&lt;p&gt;要使用此功能，请在 frontmatter 中添加 &lt;code&gt;links&lt;/code&gt; 部分。&lt;/p&gt;
+&lt;p&gt;此页面的 frontmatter：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;links&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;GitHub 是世界上最大的软件开发平台。&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.com&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;TypeScript 是 JavaScript 的一个超集，它可以编译成纯 JavaScript。&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;website&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;https://www.typescriptlang.org&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ts-logo-128.jpg&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;image&lt;/code&gt; 字段支持本地和外部图像。&lt;/p&gt;</description></item><item><title>搜索</title><link>https://gunubckah.github.io/androidcoder/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://gunubckah.github.io/androidcoder/search/</guid><description/></item></channel></rss>
